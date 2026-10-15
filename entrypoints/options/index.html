@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Chat Extension Settings</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LLM Chat Extension Settings</h1>
+    </header>
+
+    <main>
+      <section class="settings-section">
+        <h2>LLM Provider Configuration</h2>
+        
+        <div class="form-group">
+          <label for="provider-select">Provider:</label>
+          <select id="provider-select">
+            <option value="">Select a provider...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="endpoint-input">API Endpoint:</label>
+          <input type="url" id="endpoint-input" placeholder="https://api.example.com/v1/chat/completions">
+        </div>
+
+        <div class="form-group">
+          <label for="model-input">Model:</label>
+          <input type="text" id="model-input" placeholder="gpt-4">
+        </div>
+
+        <div class="form-group">
+          <label for="api-key-input">API Key:</label>
+          <input type="password" id="api-key-input" placeholder="Enter your API key (leave empty for local models)">
+        </div>
+
+        <div class="form-actions">
+          <button id="test-connection" class="btn-secondary">Test Connection</button>
+        </div>
+
+        <div id="status-message" class="status-message"></div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Response Settings</h2>
+        <div class="form-group">
+          <label for="truncation-limit-input">Response Truncation Limit (characters):</label>
+          <input type="number" id="truncation-limit-input" min="100" step="100" placeholder="2000">
+          <p class="help-text">Maximum length of tool responses before truncation. Helps prevent context overflow. Default: 2000 characters.</p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Tool Settings</h2>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="tools-enabled">
+            <span>Enable automatic tool use</span>
+          </label>
+          <p class="help-text">When enabled, the LLM can autonomously call browser automation tools like find(), extract(), summary(), describe(), etc to help with your requests.</p>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="screenshot-tool-enabled">
+            <span>Enable screenshot tool</span>
+          </label>
+          <p class="help-text">When enabled, the LLM can capture screenshots of pages. <strong>Note:</strong> Only enable this if you're using a vision-capable model, otherwise screenshots won't provide value.</p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Debug Settings</h2>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="debug-mode">
+            <span>Enable debug logging</span>
+          </label>
+          <p class="help-text">When enabled, detailed logs will appear in the browser console of pages where the extension is active.</p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Chat History</h2>
+        <p>Your chat history is stored locally in the browser.</p>
+        <button id="clear-history" class="btn-secondary">Clear Chat History</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="index.ts" type="module"></script>
+</body>
+</html>
