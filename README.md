@@ -80,11 +80,13 @@ NVIDIA's API is OpenAI-compatible, so it works through the built-in **NVIDIA NIM
 2. Open the extension **Options** page
 3. Provider: **NVIDIA NIM**
 4. Endpoint: `https://integrate.api.nvidia.com/v1/chat/completions` (pre-filled)
-5. Model: pick a **Tool Use** capable model, e.g.
+5. Model: pick a **Tool Use** capable model from the suggestions, or **type any model ID** the endpoint exposes. Default is `meta/llama-3.3-70b-instruct`, e.g.
    - `meta/llama-3.3-70b-instruct` (default)
-   - `nvidia/nemotron-3-super` or `nvidia/nemotron-3-ultra`
-   - `openai/gpt-oss-120b`
+   - `nvidia/nemotron-3.5-lightning-30b-a3b`
+   - `nvidia/nemotron-3-super-120b-a12b` or `nvidia/nemotron-3-ultra-550b-a55b`
 6. Paste the API key, click **Test Connection**, then **Save Settings**
+
+The **Model** field is free text and always editable — selecting a provider just pre-fills a suggestion, it never locks the value. Type or paste any model ID to override it.
 
 Tool calling drives this extension, so models without solid function calling will not use the browser tools reliably. Browse the full list at [build.nvidia.com/models](https://build.nvidia.com/models).
 

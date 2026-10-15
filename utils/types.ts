@@ -3,6 +3,7 @@ export interface LLMProvider {
   endpoint: string;
   model: string;
   apiKey?: string;
+  models?: string[];
 }
 
 export type MessageContent =
@@ -233,21 +234,37 @@ export const DEFAULT_PROVIDERS: Omit<LLMProvider, 'apiKey'>[] = [
     name: 'LM Studio',
     endpoint: 'http://localhost:1234/v1/chat/completions',
     model: 'local-model',
+    models: ['local-model'],
   },
   {
     name: 'OpenAI',
     endpoint: 'https://api.openai.com/v1/chat/completions',
     model: 'gpt-4o',
+    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'o3-mini'],
   },
   {
     name: 'NVIDIA NIM',
     endpoint: 'https://integrate.api.nvidia.com/v1/chat/completions',
     model: 'meta/llama-3.3-70b-instruct',
+    models: [
+      'meta/llama-3.3-70b-instruct',
+      'nvidia/nemotron-3.5-lightning-30b-a3b',
+      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning',
+      'nvidia/nemotron-3-super-120b-a12b',
+      'nvidia/nemotron-3-ultra-550b-a55b',
+      'nvidia/llama-3.1-nemotron-70b-instruct',
+      'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+    ],
   },
   {
     name: 'Anthropic Claude (via OpenRouter)',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
     model: 'anthropic/claude-3.5-sonnet',
+    models: [
+      'anthropic/claude-3.5-sonnet',
+      'anthropic/claude-3.7-sonnet',
+      'anthropic/claude-sonnet-4',
+    ],
   },
   {
     name: 'Custom',

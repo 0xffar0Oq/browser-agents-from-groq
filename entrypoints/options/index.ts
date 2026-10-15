@@ -56,6 +56,16 @@ class SettingsManager {
     });
   }
 
+  private populateModelSuggestions(models: string[] = []) {
+    const datalist = document.getElementById('model-suggestions') as HTMLDataListElement;
+    datalist.innerHTML = '';
+    models.forEach((model) => {
+      const option = document.createElement('option');
+      option.value = model;
+      datalist.appendChild(option);
+    });
+  }
+
   private populateForm() {
     if (!this.currentSettings) return;
 
@@ -66,6 +76,7 @@ class SettingsManager {
     if (providerIndex !== -1) {
       (document.getElementById('provider-select') as HTMLSelectElement).value =
         providerIndex.toString();
+      this.populateModelSuggestions(DEFAULT_PROVIDERS[providerIndex].models);
     }
 
     (document.getElementById('endpoint-input') as HTMLInputElement).value =
@@ -101,6 +112,7 @@ class SettingsManager {
         const provider = DEFAULT_PROVIDERS[selectedIndex];
         endpointInput.value = provider.endpoint;
         modelInput.value = provider.model;
+        this.populateModelSuggestions(provider.models);
       }
       this.autoSave();
     });
@@ -163,10 +175,19 @@ class SettingsManager {
         return;
       }
 
+      const providerIndex = parseInt(
+        (document.getElementById('provider-select') as HTMLSelectElement).value,
+        10,
+      );
+      const providerName =
+        providerIndex >= 0 && providerIndex < DEFAULT_PROVIDERS.length
+          ? DEFAULT_PROVIDERS[providerIndex].name
+          : 'Custom';
+
       const updatedSettings: ExtensionSettings = {
         ...this.currentSettings,
         provider: {
-          name: 'Custom',
+          name: providerName,
           endpoint,
           model,
           apiKey: apiKey || undefined,
