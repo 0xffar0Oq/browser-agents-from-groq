@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
-import { DEFAULT_TRUNCATION_LIMIT } from '~/utils/constants';
+import { DEFAULT_TRUNCATION_LIMIT, NVIDIA_NIM_API_KEY } from '~/utils/constants';
 import { backgroundLogger } from '~/utils/debug-logger';
 import type { ChatMessage, ExtensionSettings } from '~/utils/types';
-import { DEFAULT_PROVIDERS } from '~/utils/types';
+import { DEFAULT_NVIDIA_PROVIDER } from '~/utils/types';
 
 export class SettingsManager {
   private static instance: SettingsManager;
@@ -47,6 +47,21 @@ export class SettingsManager {
           needsUpdate = true;
         }
 
+        // Auto-configure NVIDIA NIM out of the box: migrate the pristine
+        // LM Studio default (or empty endpoint) to the hardcoded NVIDIA preset
+        // and backfill a missing NVIDIA API key.
+        const endpoint = settings.provider?.endpoint || '';
+        const isLocalDefault = endpoint.includes('localhost') || endpoint === '';
+        const isNvidia = endpoint.includes('integrate.api.nvidia.com');
+
+        if (isLocalDefault) {
+          settings.provider = { ...DEFAULT_NVIDIA_PROVIDER };
+          needsUpdate = true;
+        } else if (isNvidia && !settings.provider.apiKey) {
+          settings.provider.apiKey = NVIDIA_NIM_API_KEY;
+          needsUpdate = true;
+        }
+
         if (needsUpdate) {
           await browser.storage.local.set({ settings });
         }
@@ -57,8 +72,7 @@ export class SettingsManager {
       backgroundLogger.info('No settings found, creating defaults', { operationId });
       const defaultSettings: ExtensionSettings = {
         provider: {
-          ...DEFAULT_PROVIDERS[0],
-          apiKey: '',
+          ...DEFAULT_NVIDIA_PROVIDER,
         },
         chatHistory: [],
         debugMode: true,

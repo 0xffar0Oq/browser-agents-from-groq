@@ -3,6 +3,7 @@ import { openai } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { convertToModelMessages, type ModelMessage, stepCountIs, streamText } from 'ai';
 import { availableTools, getToolsForSettings } from './ai-tools';
+import { NVIDIA_MAX_TOKENS, NVIDIA_REASONING_BUDGET } from './constants';
 import { backgroundLogger } from './debug-logger';
 import type { ExtendedPart, ExtendedToolCallPart, LLMProvider } from './types';
 
@@ -23,16 +24,45 @@ export class LLMService {
     if (config.endpoint.includes('api.openai.com')) {
       this.model = openai(config.model);
     } else {
-      // Custom provider (LM Studio, etc.)
+      // Custom provider (LM Studio, NVIDIA NIM, etc.)
       const normalizedEndpoint = this.normalizeEndpoint(config.endpoint);
+      const isNvidia = config.endpoint.includes('integrate.api.nvidia.com');
 
       const customProvider = createOpenAICompatible({
         name: 'lmstudio',
         baseURL: normalizedEndpoint,
         apiKey: config.apiKey || 'not-needed',
+        ...(isNvidia ? { fetch: this.createNvidiaFetch() } : {}),
       });
       this.model = customProvider(config.model);
     }
+  }
+
+  /**
+   * NVIDIA Nemotron models are reasoning models. Inject the thinking flags from
+   * the official example (chat_template_kwargs.enable_thinking + reasoning_budget)
+   * and a large max_tokens so the final answer isn't truncated mid-reasoning.
+   */
+  private createNvidiaFetch(): typeof fetch {
+    return (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      if (init && typeof init.body === 'string') {
+        try {
+          const body = JSON.parse(init.body) as Record<string, unknown>;
+          body.chat_template_kwargs = {
+            ...((body.chat_template_kwargs as Record<string, unknown>) || {}),
+            enable_thinking: true,
+          };
+          body.reasoning_budget = NVIDIA_REASONING_BUDGET;
+          if (body.max_tokens == null && body.max_completion_tokens == null) {
+            body.max_tokens = NVIDIA_MAX_TOKENS;
+          }
+          init = { ...init, body: JSON.stringify(body) };
+        } catch {
+          // Leave the body untouched if it isn't valid JSON.
+        }
+      }
+      return fetch(input, init);
+    };
   }
 
   /**

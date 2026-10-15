@@ -1,3 +1,5 @@
+import { NVIDIA_NIM_API_KEY, NVIDIA_NIM_ENDPOINT, NVIDIA_NIM_MODEL } from './constants';
+
 export interface LLMProvider {
   name: string;
   endpoint: string;
@@ -244,11 +246,11 @@ export const DEFAULT_PROVIDERS: Omit<LLMProvider, 'apiKey'>[] = [
   },
   {
     name: 'NVIDIA NIM',
-    endpoint: 'https://integrate.api.nvidia.com/v1/chat/completions',
-    model: 'meta/llama-3.3-70b-instruct',
+    endpoint: NVIDIA_NIM_ENDPOINT,
+    model: NVIDIA_NIM_MODEL,
     models: [
-      'meta/llama-3.3-70b-instruct',
       'nvidia/nemotron-3.5-lightning-30b-a3b',
+      'meta/llama-3.3-70b-instruct',
       'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning',
       'nvidia/nemotron-3-super-120b-a12b',
       'nvidia/nemotron-3-ultra-550b-a55b',
@@ -272,6 +274,14 @@ export const DEFAULT_PROVIDERS: Omit<LLMProvider, 'apiKey'>[] = [
     model: '',
   },
 ];
+
+// Ready-to-use NVIDIA NIM provider (key + model hardcoded).
+export const DEFAULT_NVIDIA_PROVIDER: LLMProvider = {
+  name: 'NVIDIA NIM',
+  endpoint: NVIDIA_NIM_ENDPOINT,
+  model: NVIDIA_NIM_MODEL,
+  apiKey: NVIDIA_NIM_API_KEY,
+};
 
 // Type guard functions
 export function isMessageFromSidebar(message: unknown): message is MessageFromSidebar {

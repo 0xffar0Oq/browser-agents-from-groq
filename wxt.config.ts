@@ -19,6 +19,8 @@ export default defineConfig({
       'http://localhost:*/*',
       'https://api.openai.com/*',
       'https://api.anthropic.com/*',
+      'https://integrate.api.nvidia.com/*',
+      'https://openrouter.ai/*',
     ],
     icons: {
       16: 'icons/icon-16.png',
