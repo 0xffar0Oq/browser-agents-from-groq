@@ -20,7 +20,25 @@ https://github.com/user-attachments/assets/7a584180-e8dd-4c7f-838a-efd051fa2968
 
 ## Quick Start
 
-Currently there aren't ready-to-use extension builds.
+### Zero-config build (NVIDIA NIM, free)
+
+There's a ready-to-use Chrome build that is **preconfigured** — no keys or settings
+needed. Download the zip from the [latest release](../../releases/latest), unzip it,
+then load it in Chrome:
+
+1. Open `chrome://extensions`
+2. Enable **Developer mode** (top-right)
+3. Click **Load unpacked** and select the unzipped folder
+4. Open the extension side panel and start chatting
+
+It ships with NVIDIA's **free** hosted API already configured (endpoint, a shared
+demo API key, and `nvidia/nemotron-3.5-lightning-30b-a3b` as the model). The model
+field stays editable in **Options**, so you can point it at any other model or
+provider.
+
+> The bundled NVIDIA key is a shared, free demo key — perfect for trying things out.
+> It may be rate-limited, so grab your own free key at
+> [build.nvidia.com/settings](https://build.nvidia.com/settings) for daily use.
 
 For development setup, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
@@ -68,8 +86,8 @@ This should install dependencies, build the extension, and launch Chrome in exte
 
 You can also configure:
 
+- **NVIDIA NIM (default, preconfigured)**: Hosted, OpenAI-compatible, **free** demo key bundled
 - **OpenAI API**: Requires API key
-- **NVIDIA NIM**: Hosted, OpenAI-compatible models (Llama 3.3, Nemotron, GPT-OSS, …)
 - **Custom endpoints**: Any OpenAI-compatible API
 
 ### Using NVIDIA NIM
@@ -80,9 +98,9 @@ NVIDIA's API is OpenAI-compatible, so it works through the built-in **NVIDIA NIM
 2. Open the extension **Options** page
 3. Provider: **NVIDIA NIM**
 4. Endpoint: `https://integrate.api.nvidia.com/v1/chat/completions` (pre-filled)
-5. Model: pick a **Tool Use** capable model from the suggestions, or **type any model ID** the endpoint exposes. Default is `meta/llama-3.3-70b-instruct`, e.g.
-   - `meta/llama-3.3-70b-instruct` (default)
-   - `nvidia/nemotron-3.5-lightning-30b-a3b`
+5. Model: pick a **Tool Use** capable model from the suggestions, or **type any model ID** the endpoint exposes. Default is `nvidia/nemotron-3.5-lightning-30b-a3b`, e.g.
+   - `nvidia/nemotron-3.5-lightning-30b-a3b` (default, preconfigured)
+   - `meta/llama-3.3-70b-instruct`
    - `nvidia/nemotron-3-super-120b-a12b` or `nvidia/nemotron-3-ultra-550b-a55b`
 6. Paste the API key, click **Test Connection**, then **Save Settings**
 
