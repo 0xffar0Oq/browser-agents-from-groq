@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { defineBackground } from 'wxt/utils/define-background';
 import { backgroundLogger } from '~/utils/debug-logger';
 import { messageHandler } from '~/utils/message-handler';
+import { networkCapture } from '~/utils/network-capture';
 import type { ExtendedBrowser, MessageFromSidebar } from '~/utils/types';
 
 /**
@@ -13,6 +14,13 @@ export default defineBackground({
   persistent: true,
   main() {
     backgroundLogger.debug('Background script starting...');
+
+    // Passive network capture for the security tools (rep+ style)
+    try {
+      networkCapture.start();
+    } catch (error) {
+      backgroundLogger.error('Failed to start network capture', { error });
+    }
 
     const extendedBrowser = browser as ExtendedBrowser;
     if (extendedBrowser.sidePanel) {

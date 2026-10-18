@@ -1,6 +1,7 @@
 import { backgroundLogger } from '~/utils/debug-logger';
 import { LLMService } from '~/utils/llm-service';
 import { settingsManager } from '~/utils/settings-manager';
+import { getSystemMessage } from '~/utils/system-prompt';
 import type { ChatMessage, LLMProvider } from '~/utils/types';
 
 /**
@@ -64,7 +65,8 @@ export class ChatManager {
 
       // Get conversation history
       const conversationHistory = await settingsManager.getTabConversation(tabId);
-      const messagesForAPI = [...conversationHistory, newUserMessage];
+      // Prepend system message for the Groq agent (security + TradingView guardrails)
+      const messagesForAPI = [getSystemMessage('system'), ...conversationHistory, newUserMessage];
       const conversationId = tabId ? `tab-${tabId}` : 'global';
 
       backgroundLogger.debug('Conversation loaded', {
@@ -196,6 +198,8 @@ export class ChatManager {
         {
           toolsEnabled: settings.toolsEnabled,
           screenshotToolEnabled: settings.screenshotToolEnabled,
+          securityToolsEnabled: (settings as any).securityToolsEnabled,
+          tradingToolsEnabled: (settings as any).tradingToolsEnabled,
         },
       );
       const duration = Date.now() - startTime;

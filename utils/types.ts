@@ -1,4 +1,4 @@
-import { NVIDIA_NIM_API_KEY, NVIDIA_NIM_ENDPOINT, NVIDIA_NIM_MODEL } from './constants';
+import { GROQ_API_KEY, GROQ_ENDPOINT, GROQ_MODEL } from './constants';
 
 export interface LLMProvider {
   name: string;
@@ -20,7 +20,7 @@ export type MessageContent =
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'tool';
+  role: 'user' | 'assistant' | 'tool' | 'system';
   content: MessageContent;
   timestamp: number;
   tool_calls?: LLMToolCall[];
@@ -218,6 +218,8 @@ export interface ExtensionSettings {
   tabConversations?: { [tabId: string]: ChatMessage[] };
   toolsEnabled: boolean;
   screenshotToolEnabled: boolean;
+  securityToolsEnabled?: boolean;
+  tradingToolsEnabled?: boolean;
   maxLogEntries: number;
 }
 
@@ -245,17 +247,16 @@ export const DEFAULT_PROVIDERS: Omit<LLMProvider, 'apiKey'>[] = [
     models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'o3-mini'],
   },
   {
-    name: 'NVIDIA NIM',
-    endpoint: NVIDIA_NIM_ENDPOINT,
-    model: NVIDIA_NIM_MODEL,
+    name: 'Groq',
+    endpoint: GROQ_ENDPOINT,
+    model: GROQ_MODEL,
     models: [
-      'nvidia/nemotron-3.5-lightning-30b-a3b',
-      'meta/llama-3.3-70b-instruct',
-      'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning',
-      'nvidia/nemotron-3-super-120b-a12b',
-      'nvidia/nemotron-3-ultra-550b-a55b',
-      'nvidia/llama-3.1-nemotron-70b-instruct',
-      'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+      'openai/gpt-oss-120b',
+      'openai/gpt-oss-20b',
+      'qwen/qwen3.8-27b',
+      'minimaxai/minimax-m2.7',
+      'llama-3.1-8b-instant',
+      'llama-3.3-70b-versatile',
     ],
   },
   {
@@ -275,12 +276,12 @@ export const DEFAULT_PROVIDERS: Omit<LLMProvider, 'apiKey'>[] = [
   },
 ];
 
-// Ready-to-use NVIDIA NIM provider (key + model hardcoded).
-export const DEFAULT_NVIDIA_PROVIDER: LLMProvider = {
-  name: 'NVIDIA NIM',
-  endpoint: NVIDIA_NIM_ENDPOINT,
-  model: NVIDIA_NIM_MODEL,
-  apiKey: NVIDIA_NIM_API_KEY,
+// Ready-to-use Groq provider (key + model hardcoded).
+export const DEFAULT_GROQ_PROVIDER: LLMProvider = {
+  name: 'Groq',
+  endpoint: GROQ_ENDPOINT,
+  model: GROQ_MODEL,
+  apiKey: GROQ_API_KEY,
 };
 
 // Type guard functions

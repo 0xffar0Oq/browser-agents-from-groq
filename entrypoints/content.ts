@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { createLLMHelper } from '~/utils/llm-helper';
+import { pageFunctions } from '~/utils/page-functions';
 import type { ContentScriptFunctionRequest } from '~/utils/types';
 
 // Validation functions for tool arguments
@@ -45,6 +46,22 @@ export default defineContentScript({
         try {
           const functionName = typedRequest.function;
           const args = typedRequest.arguments || {};
+
+          // Page-level functions (script discovery, TradingView tools)
+          if (functionName in pageFunctions) {
+            Promise.resolve()
+              .then(() => pageFunctions[functionName](args))
+              .then((result) => {
+                sendResponse({ success: true, result });
+              })
+              .catch((error: unknown) => {
+                sendResponse({
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Page function failed',
+                });
+              });
+            return true; // Keep message channel open for async response
+          }
 
           if (functionName in LLMHelper) {
             // Handle function arguments properly based on function signature

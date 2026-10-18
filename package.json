@@ -1,7 +1,7 @@
 {
-  "name": "browser-llm-script-interaction-extension",
-  "version": "1.0.2",
-  "description": "A browser extension that enables LLMs to interact through a chat interface",
+  "name": "browser-agents-from-groq",
+  "version": "2.0.0",
+  "description": "Browser agent extension powered by Groq with security superpowers (rep+ style) and TradingView trading tools",
   "type": "module",
   "scripts": {
     "dev": "wxt",

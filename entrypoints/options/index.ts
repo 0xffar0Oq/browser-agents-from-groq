@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { DEFAULT_TRUNCATION_LIMIT, NVIDIA_NIM_API_KEY } from '~/utils/constants';
+import { DEFAULT_TRUNCATION_LIMIT, GROQ_API_KEY } from '~/utils/constants';
 import type { ExtensionSettings, MessageFromSidebar, MessageToSidebar } from '~/utils/types';
 import { DEFAULT_PROVIDERS, isExtensionSettings } from '~/utils/types';
 
@@ -113,8 +113,8 @@ class SettingsManager {
         endpointInput.value = provider.endpoint;
         modelInput.value = provider.model;
         this.populateModelSuggestions(provider.models);
-        if (provider.name === 'NVIDIA NIM' && !apiKeyInput.value) {
-          apiKeyInput.value = NVIDIA_NIM_API_KEY;
+        if (provider.name === 'Groq' && !apiKeyInput.value) {
+          apiKeyInput.value = GROQ_API_KEY;
         }
       }
       this.autoSave();

@@ -12,15 +12,30 @@ export default defineConfig({
     publicDir: 'public',
   }),
   manifest: ({ browser }) => ({
-    name: 'LLM actions',
-    description: 'Create actions for any website using an LLM',
-    permissions: ['storage', 'activeTab', 'tabs', ...(browser === 'chrome' ? ['sidePanel'] : [])],
+    name: 'LLM Actions+ (Groq)',
+    description:
+      'Browser agent with Groq LLM: page automation, security recon tools, and TradingView trading helpers',
+    permissions: [
+      'storage',
+      'activeTab',
+      'tabs',
+      'webRequest',
+      ...(browser === 'chrome' ? ['sidePanel'] : []),
+    ],
     host_permissions: [
       'http://localhost:*/*',
       'https://api.openai.com/*',
       'https://api.anthropic.com/*',
-      'https://integrate.api.nvidia.com/*',
+      'https://api.groq.com/*',
       'https://openrouter.ai/*',
+      'https://*.tradingview.com/*',
+      '*://*/*',
+    ],
+    web_accessible_resources: [
+      {
+        resources: ['tv-sniffer.js'],
+        matches: ['*://*/*'],
+      },
     ],
     icons: {
       16: 'icons/icon-16.png',

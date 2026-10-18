@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
-import { DEFAULT_TRUNCATION_LIMIT, NVIDIA_NIM_API_KEY } from '~/utils/constants';
+import { DEFAULT_TRUNCATION_LIMIT, GROQ_API_KEY } from '~/utils/constants';
 import { backgroundLogger } from '~/utils/debug-logger';
 import type { ChatMessage, ExtensionSettings } from '~/utils/types';
-import { DEFAULT_NVIDIA_PROVIDER } from '~/utils/types';
+import { DEFAULT_GROQ_PROVIDER } from '~/utils/types';
 
 export class SettingsManager {
   private static instance: SettingsManager;
@@ -42,23 +42,29 @@ export class SettingsManager {
           needsUpdate = true;
         }
 
-        if (typeof (settings as any).maxLogEntries === 'undefined') {
-          (settings as any).maxLogEntries = 10000;
+        if (typeof (settings as any).securityToolsEnabled === 'undefined') {
+          (settings as any).securityToolsEnabled = true;
           needsUpdate = true;
         }
 
-        // Auto-configure NVIDIA NIM out of the box: migrate the pristine
-        // LM Studio default (or empty endpoint) to the hardcoded NVIDIA preset
-        // and backfill a missing NVIDIA API key.
+        if (typeof (settings as any).tradingToolsEnabled === 'undefined') {
+          (settings as any).tradingToolsEnabled = true;
+          needsUpdate = true;
+        }
+
+        // Auto-configure Groq out of the box: migrate the pristine
+        // LM Studio default (or empty endpoint) and any legacy NVIDIA NIM
+        // configuration to the hardcoded Groq preset.
         const endpoint = settings.provider?.endpoint || '';
         const isLocalDefault = endpoint.includes('localhost') || endpoint === '';
-        const isNvidia = endpoint.includes('integrate.api.nvidia.com');
+        const isLegacyNvidia = endpoint.includes('integrate.api.nvidia.com');
+        const isGroq = endpoint.includes('api.groq.com');
 
-        if (isLocalDefault) {
-          settings.provider = { ...DEFAULT_NVIDIA_PROVIDER };
+        if (isLocalDefault || isLegacyNvidia) {
+          settings.provider = { ...DEFAULT_GROQ_PROVIDER };
           needsUpdate = true;
-        } else if (isNvidia && !settings.provider.apiKey) {
-          settings.provider.apiKey = NVIDIA_NIM_API_KEY;
+        } else if (isGroq && !settings.provider.apiKey) {
+          settings.provider.apiKey = GROQ_API_KEY;
           needsUpdate = true;
         }
 
@@ -72,13 +78,15 @@ export class SettingsManager {
       backgroundLogger.info('No settings found, creating defaults', { operationId });
       const defaultSettings: ExtensionSettings = {
         provider: {
-          ...DEFAULT_NVIDIA_PROVIDER,
+          ...DEFAULT_GROQ_PROVIDER,
         },
         chatHistory: [],
         debugMode: true,
         truncationLimit: DEFAULT_TRUNCATION_LIMIT,
         toolsEnabled: true,
         screenshotToolEnabled: false,
+        securityToolsEnabled: true,
+        tradingToolsEnabled: true,
         maxLogEntries: 10000,
       };
 
